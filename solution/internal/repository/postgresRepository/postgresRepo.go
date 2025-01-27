@@ -12,7 +12,6 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	_ "github.com/lib/pq"
-	"go.uber.org/zap"
 )
 
 type PostgresRepo struct {
@@ -861,7 +860,6 @@ func (pr *PostgresRepo) GetUserHistory(ctx context.Context, sortRules *models.Hi
 					until = *ActiveUntil >= now
 				}
 			}
-			l, _ := zap.NewProduction()
 			if (count && until && from) != *promo.Active {
 				_, checkErr := sq.Update("promos").
 					Where(sq.Eq{"promo_id": promo.PromoId}).
@@ -871,7 +869,6 @@ func (pr *PostgresRepo) GetUserHistory(ctx context.Context, sortRules *models.Hi
 				if checkErr != nil {
 					return nil, 0, checkErr
 				}
-				l.Sugar().Info(promo.PromoId, " not match")
 			}
 			*promo.Active = count && until && from
 			statErr := sq.Select("is_liked_by_user").
@@ -888,7 +885,6 @@ func (pr *PostgresRepo) GetUserHistory(ctx context.Context, sortRules *models.Hi
 				promo.IsLiked = &falseVal
 			}
 			promo.IsActivated = &trueVal
-			l.Sugar().Info(activate_time, " ", *promo.PromoId)
 			activations = append(activations, promo)
 		}
 		count++

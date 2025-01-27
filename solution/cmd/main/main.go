@@ -150,16 +150,4 @@ func main() {
 	}
 
 	mainLogger.Info(ctx, "server stopped")
-	// hashedPassword, err := utils.HashPassword("123456789012345678901234567890123456789012345678901234567890")
-	// fmt.Println(hashedPassword, err, 2)
-	// cmp := &models.Company{CompanyID: "ff010a23-04a8-4456-b21f-69cbb61a867d", CompanyName: "Nikita company", Email: "123@mail.com", Password: hashedPassword}
-	// res2, err2 := sq.Insert("companies").Columns("company_id", "company_name", "email", "password").RunWith(db.Db).PlaceholderFormat(sq.Dollar).Values(cmp.CompanyID, cmp.CompanyName, cmp.Email, hashedPassword).Exec()
-	// fmt.Println(res2, err2, 3)
-	// cmp2 := &models.Company{CompanyID: "ff010a23-04a8-4456-b21f-69cbb61a867d"}
-	// err3 := sq.Select("company_name", "email", "password").From("companies").Where(sq.Eq{"company_id": cmp2.CompanyID}).PlaceholderFormat(sq.Dollar).RunWith(db.Db).Scan(&cmp2.CompanyName, &cmp2.Email, &cmp2.Password)
-
-	// fmt.Println(cmp2, err3, 4)
-	// redisClient.Set(ctx, "key", 123, 24*time.Hour)
-	// fmt.Println(redisClient.Get(ctx, "key"))
-
 }

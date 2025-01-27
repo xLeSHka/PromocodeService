@@ -7,12 +7,3 @@ type Company struct {
 	Password  []byte `json:"password" db:"password" redis:"password"`
 }
 
-// func (c *Company) GetName() string {
-// 	name := make([]uint16, 0)
-// 	json.Unmarshal(c.Name, &name)
-// 	return string(utf16.Decode(name))
-// }
-// func (c *Company) SetName(name string) {
-// 	data, _ := json.Marshal(utf16.Encode([]rune(name)))
-// 	c.Name = data
-// }

@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/redis/go-redis/v9"
-	"go.uber.org/zap"
 )
 
 type PostgresRepo interface {
@@ -509,16 +508,13 @@ func (s *Service) UserGetComment(ctx context.Context, comment models.UserGetComm
 	return comm, nil
 }
 func (s *Service) UserEditComment(ctx context.Context, comment models.UserEditCommentRequest) (*models.Comment, error) {
-	l, _ := zap.NewProduction()
 	_, err := s.postgresRepo.GetPromoById(ctx, models.Promo{PromoId: comment.PromoID})
 	if err != nil {
-		l.Sugar().Info(0)
 		return nil, ErrPromoNotFound
 	}
 	ok, err := s.postgresRepo.CheckComment(ctx, models.UserCheckComments{PromoID: comment.PromoID, UserID: comment.UserID, CommentId: comment.CommentId})
 	if err != nil {
 		if err == sql.ErrNoRows {
-			l.Sugar().Info(1)
 			return nil, ErrPromoNotFound
 		}
 		return nil, err
@@ -529,7 +525,6 @@ func (s *Service) UserEditComment(ctx context.Context, comment models.UserEditCo
 	comm, err := s.postgresRepo.UserEditComment(ctx, comment)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			l.Sugar().Info(2)
 			return nil, ErrPromoNotFound
 		}
 		return nil, err
@@ -537,10 +532,8 @@ func (s *Service) UserEditComment(ctx context.Context, comment models.UserEditCo
 	return comm, nil
 }
 func (s *Service) UserDeleteComment(ctx context.Context, comment models.UserDeleteCommentRequest) error {
-	l, _ := zap.NewProduction()
 	promo, err := s.postgresRepo.GetPromoById(ctx, models.Promo{PromoId: comment.PromoID})
 	if err != nil {
-		l.Sugar().Info(0)
 		if err == sql.ErrNoRows {
 			return ErrPromoNotFound
 		}
@@ -548,7 +541,6 @@ func (s *Service) UserDeleteComment(ctx context.Context, comment models.UserDele
 	}
 	ok, err := s.postgresRepo.CheckComment(ctx, models.UserCheckComments{PromoID: comment.PromoID, UserID: comment.UserID, CommentId: comment.CommentId})
 	if err != nil {
-		l.Sugar().Info(1)
 		if err == sql.ErrNoRows {
 			return ErrPromoNotFound
 		}
@@ -560,7 +552,6 @@ func (s *Service) UserDeleteComment(ctx context.Context, comment models.UserDele
 	comment.CommentCount = promo.CommentCount - 1
 	err = s.postgresRepo.UserDeleteComment(ctx, comment)
 	if err != nil {
-		l.Sugar().Info(2)
 		if err == sql.ErrNoRows {
 			return ErrPromoNotFound
 		}

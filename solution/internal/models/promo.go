@@ -36,13 +36,7 @@ type Target struct {
 	Categories StringSlice `json:"categories,omitempty" db:"categories,omitempty" validate:"omitempty,lte=20,dive,gte=2,lte=20"`
 }
 
-// type PromoStat struct {
-// 	ID          *string `json:"id" db:"company_id" redis:"id" validate:"required"`
-// 	PromoId     *string `json:"promo_id" db:"promo_id" validate:"required,uuid"`
-// 	CompanyId   *string `json:"company_id" db:"company_id" validate:"required,uuid"`
-// 	IsActivated *bool   `json:"is_activated_by_user" db:"is_activated_by_user" validate:"required"`
-// 	IsLiked     *bool   `json:"is_liked_by_user" db:"is_liked_by_user" validate:"required"`
-// }
+
 
 func (t Target) Value() (driver.Value, error) {
 	return json.Marshal(t)
