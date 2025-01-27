@@ -1,0 +1,154 @@
+# image_solution: ${IMAGE_SOLUTION}
+image_postgres: postgres:16.6-alpine3.21 # ${IMAGE_POSTGRES}
+image_redis: redis:7.4-alpine3.21 # ${IMAGE_REDIS}
+# image_antifraud: ${IMAGE_ANTIFRAUD} # lodthe/prod-backend-antifraud:latest
+timeout: 20m
+default_testcase_timeout: 2m
+default_antifraud_config:
+  cache_lifetime: 5s
+tests_dir_path: tests
+testcases:
+  - name: "01/ping"
+    enabled: true
+    steps:
+      - name: Проверка пинга
+        score: 0.01
+        type: tavern
+        tavern:
+          filepath: test_01_ping.tavern.yml
+  - name: "02/business/auth/sign-up"
+    enabled: true
+    steps:
+      - name: Успешная регистрация
+        score: 0.02
+        type: tavern
+        tavern:
+          filepath: test_02_business_signup.tavern.yml
+      - name: Валидация регистрации с некорректным паролем
+        score: 0.01
+        type: tavern
+        tavern:
+          filepath: test_02_business_signup_invalid_password.tavern.yml
+  - name: "03/business/auth/sign-in"
+    enabled: true
+    steps:
+      - name: Успешная аутентификация 
+        score: 0.04
+        type: tavern
+        tavern:
+          filepath: test_03_business_signin.tavern.yml
+  - name: "04/business/promo/create"
+    enabled: true
+    steps:
+      - name: Успешное создание промокода
+        score: 0.03
+        type: tavern
+        tavern:
+          filepath: test_04_business_promo_create_valid.tavern.yml
+      - name: Перезагрузка приложения
+        type: reload
+      - name: Создание промокода с некорректной структурой запроса
+        score: 0.03
+        type: tavern
+        tavern:
+          filepath: test_04_business_promo_create_invalid.tavern.yml
+  - name: "05/business/promo/list"
+    enabled: true
+    steps:
+      - name: Успешное создание промокодов
+        type: tavern
+        tavern:
+          filepath: test_04_business_promo_create_valid.tavern.yml
+      - name: Получение списка промокодов
+        score: 0.08
+        type: tavern
+        tavern:
+          filepath: test_05_business_promo_list.tavern.yml
+  - name: "06/business/promo/{id}"
+    enabled: true
+    steps:
+      - name: Корректное редактирование и получение промокода по ID
+        score: 0.04
+        continue_if_failed: true
+        type: tavern
+        tavern:
+          filepath: test_06_business_promo_id_valid.tavern.yml
+      - name: Редактирование промокода с некорректными параметрами и логикой
+        score: 0.05
+        type: tavern
+        tavern:
+          filepath: test_06_business_promo_id_invalid.tavern.yml
+  - name: "07/user/auth/sign-up"
+    enabled: true
+    steps:
+      - name: Корректная регистрация пользователя
+        score: 0.01
+        type: tavern
+        tavern:
+          filepath: test_07_user_signup.tavern.yml
+      - name: Некорректный запрос на регистрацию пользователя
+        score: 0.02
+        type: tavern
+        tavern:
+          filepath: test_07_user_signup_invalid.tavern.yml
+  - name: "08/user/auth/sign-in"
+    enabled: true
+    steps:
+      - name: Корректная аутентификация пользователя
+        score: 0.03
+        type: tavern
+        tavern:
+          filepath: test_08_user_signin.tavern.yml
+  - name: "09/user/profile"
+    enabled: true
+    steps:
+      - name: Получение и редактирование профиля
+        score: 0.03
+        continue_if_failed: true
+        type: tavern
+        tavern:
+          filepath: test_09_user_profile.tavern.yml
+      - name: Некорректный запрос на редактирование профиля
+        score: 0.03
+        type: tavern
+        tavern:
+          filepath: test_09_user_profile_invalid.tavern.yml
+  - name: "10/user/feed"
+    enabled: true
+    steps:
+      - name: Получение ленты промокодов
+        score: 0.1
+        type: tavern
+        tavern:
+          filepath: test_10_user_feed.tavern.yml
+      - name: Перезагрузка приложения
+        type: reload
+      - name: Получение промокода по ID
+        score: 0.04
+        type: tavern
+        tavern:
+          filepath: test_10_user_promo.tavern.yml
+  - name: "11/user/promo/{id}/like"
+    enabled: true
+    steps:
+      - name: Валидация лайков
+        score: 0.07
+        type: tavern
+        tavern:
+          filepath: test_11_user_like.tavern.yml
+  - name: "12/user/promo/{id}/comments"
+    enabled: true
+    steps:
+      - name: Создание, редактирование и получение комментариев к промокодам
+        score: 0.1
+        type: tavern
+        tavern:
+          filepath: test_12_user_comments.tavern.yml
+  - name: "13/user/promo/{id}/activate"
+    enabled: true
+    steps:
+      - name: Активация промокодов [простые случаи]
+        score: 0.2
+        type: tavern
+        tavern:
+          filepath: test_13_user_promo_activate.tavern.yml
